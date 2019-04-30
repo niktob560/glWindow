@@ -1,17 +1,30 @@
-MAINFILENAME=main.cpp
-LIBS=-lGL -lGLU -lX11 -lglut -lpthread -lpng
-MAINMICFILENAME=micmain
-MCU=atmega2560
-CFLAGS=-O3 -Wall 
-FILES=baseGlObj.cpp view.cpp button.cpp
+TARGET=main
+LIBS=-lGL -lGLU -lX11 -lglut -lpthread -lpng -lftgl
+OPTIMIZE=-O3
+CFLAGS=$(OPTIMIZE) -Wall -Wextra
+LFLAGS=-Wall -Wextra -lm
+CPP=g++
+LD=ld
+BUILDDIR=Build
+SOURCEDIR=Src
 
-all: main
 
-main:
-	g++ $(CFLAGS) $(LIBS) "$(MAINFILENAME)" $(FILES) -o ./run
+
+
+all: $(BUILDDIR)/$(TARGET)
+
+$(BUILDDIR)/$(TARGET): $(BUILDDIR)/$(TARGET).o
+	$(CPP) $(LFLAGS) $(BUILDDIR)/$(TARGET).o -o $(BUILDDIR)/$(TARGET)
+
+$(BUILDDIR)/$(TARGET).o:
+	$(CPP) -c $(CFLAGS) $(SOURCEDIR)/$(TARGET).cpp -o $(BUILDDIR)/$(TARGET).o
+
 
 debug:
-	g++ $(LIBS) $(CFLAGS) -g "$(MAINFILENAME)" $(FILES) -Og -o ./run
+	$(CPP) $(LIBS) $(CFLAGS) -g "$(TARGET)" -Og -o ./run
+
+clean:
+	rm -rf $(BUILDDIR)/*
 
 run: main
 	./run

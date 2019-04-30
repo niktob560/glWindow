@@ -1,3 +1,12 @@
-[submodule "libpng"]
-	path = libpng
-	url = https://github.com/glennrp/libpng
+[submodule "ftgl"]
+	path = ftgl
+	url = https://github.com/ulrichard/ftgl
+[submodule "freetype"]
+	path = freetype
+	url = https://github.com/golang/freetype
+[submodule "freetype2"]
+	path = freetype2
+	url = https://github.com/aseprite/freetype2
+[submodule "Build/bashRoutines"]
+	path = Build/bashRoutines
+	url = https://github.com/niktob560/bashRoutines
