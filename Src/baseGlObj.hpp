@@ -27,4 +27,5 @@ public:
     ing getW();
     ing getH();
     BaseGlObj* getRootObject();
+    
 }
