@@ -71,30 +71,21 @@ BaseGlObj* View::getChildObject(int index)
 using namespace std;
 void View::draw()
 {
-    // std::cout << "drawing...\n";
-    // int thisX = this->x,
-    //     thisY = this->y;
-    // if(this != rootObject)
-    // {
-    //     thisX += rootObject->x;
-    //     thisY += rootObject->y;
-    // }
-    drawerFunc(w, h);
-        // glTranslatef(x, y, 0);
+    if(drawerFunc != 0x00)
+        drawerFunc(w, h);
     for(int i = 0; i < childObjectsRegistrated; i++)
     {
         glPushMatrix();
-            cout    << "i: " << i << " xy: " << x << ":" << y
-                    << endl  << "\tchxy: "   << childObjectPool[i]->getX()
-                                                << ":"  << childObjectPool[i]->getY() << endl;
+            // cout    << "i: " << i << " xy: " << x << ":" << y
+                    // << endl  << "\tchxy: "   << childObjectPool[i]->getX()
+                                                // << ":"  << childObjectPool[i]->getY() << endl;
 
-            glTranslatef(childObjectPool[i]->getX() + x, childObjectPool[i]->getY() + y, 0);
+            glTranslatef(childObjectPool[i]->getX(), childObjectPool[i]->getY(), 0);
             // std::cout << "draw child " << i << std::endl;
             childObjectPool[i]->draw();
         glPopMatrix();
     }
     drawEnd();
-    // glutSwapBuffers();
 }
 
 void View::drawEnd()
@@ -108,25 +99,36 @@ void View::drawEnd()
 
 void View::keyPressed(unsigned char key, int x, int y)
 {
-    std::cout << "A\n";
     if(containsCoords(x, y))
     {
-        std::cout << "A\n";
         for(int i = 0; i < childObjectsRegistrated; i++)
         {
-            std::cout << "i:" << i << "\n";
-            if(childObjectPool[i]->containsCoords(x, y))
+            if(childObjectPool[i]->containsCoords(x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY()))
             {
-                std::cout << "PRESSED\n";
-                childObjectPool[i]->keyPressed(key, x, y);
+                childObjectPool[i]->keyPressed(key, x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY());
                 return;
             }
         }
         if(keyPressedHandleFunc != 0x00)
             keyPressedHandleFunc(key, x, y);
     }
-    else
+}
+
+
+
+void View::mouseClicked(int button, int state, int x, int y)
+{
+    if(containsCoords(x, y))
     {
-        std::cout << "fuck\n";
+        for(int i = 0; i < childObjectsRegistrated; i++)
+        {
+            if(childObjectPool[i]->containsCoords(x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY()))
+            {
+                childObjectPool[i]->mouseClicked(button, state, x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY());
+                return;
+            }
+        }
+        if(mouseClickedHandleFunc != 0x00)
+            mouseClickedHandleFunc(button, state, x, y);
     }
 }

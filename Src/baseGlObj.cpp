@@ -81,6 +81,18 @@ void BaseGlObj::setKeypressHandler(void (*keyPressedHandleFunc)(unsigned char ke
     this->keyPressedHandleFunc = keyPressedHandleFunc;
 }
 
+void BaseGlObj::setMouseClickHandler(void (*mouseClickedHandleFunc)(int button, int state, int x, int y))
+{
+    this->mouseClickedHandleFunc = mouseClickedHandleFunc;
+}
+
+void BaseGlObj::setObjectId(int id)
+{
+    objectId = id;
+}
+
+
+
 
 //getters
 int BaseGlObj::getX()
@@ -108,11 +120,19 @@ BaseGlObj* BaseGlObj::getRootObject()
     return rootObject;
 }
 
+int BaseGlObj::getObjectId()
+{
+    return objectId;
+}
+
+
+
 
 void BaseGlObj::draw()
 {
     std::cout << "baseDraw\n";
-    drawerFunc(w, h);
+    if(drawerFunc != 0x00)
+        drawerFunc(w, h);
 }
 
 void BaseGlObj::drawEnd()
@@ -131,21 +151,19 @@ void BaseGlObj::keyPressed(unsigned char key, int x, int y)
 
 bool BaseGlObj::containsCoords(int x, int y)
 {
-    int thisX = this->x,
-        thisY = this->y;
-    if(rootObject != this)
-    {
-        std::cout << "nice\n";
-        thisX += this->x;
-        thisY += this->y;
-    }
-    std::cout << "\t" << x << ":" << y << "\n\t\t" << thisX << ":" << thisY << "\n";
+    // std::cout << "\t" << x << ":" << y << "\n\t\t" << x << ":" << y << "\n";
+    //
+    // std::cout   << "(x >= 0)-------" << (x >= x) << "\n" << "(x <= w)---" << (x <= x + w) << "\n"
+    //             << "(y >= 0)-------" << (y >= y) << "\n" << "(y <= h)---" << (y <= y + h) << "\n";
 
-    std::cout   << (x >= thisX) << "\n" << (x <= thisX + w) << "\n"
-                << (y >= thisY) << "\n" << (y <= thisY + h) << "\n";
+    return (   x >= 0
+            && x <= w
+            && y >= 0
+            && y <= h);
+}
 
-    return (   x >= thisX - w / 2
-            && x <= thisX + w / 2
-            && y >= thisY - h / 2
-            && y <= thisY + h / 2);
+void BaseGlObj::mouseClicked(int button, int state, int x, int y)
+{
+    if(mouseClickedHandleFunc != 0x00)
+        mouseClickedHandleFunc(button, state, x, y);
 }

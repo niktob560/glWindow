@@ -82,13 +82,21 @@ void _glReshape(int w, int h)
 }
 
 
+int fuck = 200;
+View childObject(fuck, 100, 100, 100, &rootObject);
+
 void _timf(int value)				// Timer function
 {
+	// fuck++;
+	// if(fuck > glutGet(GLUT_WINDOW_WIDTH) + 100)
+	// 	fuck = -300;
+	// cout << "fuck " << fuck << "\n";
+	childObject.setX(fuck);
 	// if(!_terminated)					//if don't wanna terminate
 	// {
 		//cout << "redraw by timer\n";
 		glutPostRedisplay();		//Redraw windows
-		glutTimerFunc(1000, _timf, 0);	//Setup next timer
+		glutTimerFunc(10, _timf, 0);	//Setup next timer
 	// }
 	// else							//if wanna terminate
 	// {
@@ -103,6 +111,10 @@ void _handleKeypress(unsigned char key, //pressed key
 }
 
 
+void _mouseClick(int button, int state, int x, int y)
+{
+	rootObject.mouseClicked(button, state, x, rootObject.getH() - y);
+}
 
 int __glArg__;
 void _glVisualFunc()
@@ -115,8 +127,8 @@ void _glVisualFunc()
 	//glutInitWindowSize(800, 600);
 	glutCreateWindow("glWindowStandartWindow");
 	glutFullScreen();
-	// cout << "mouse\n";
-	// glutMouseFunc(_mouseClick);
+	cout << "mouse\n";
+	glutMouseFunc(_mouseClick);
 	cout << "reshape\n";
 	glutReshapeFunc(_glReshape);
 	cout << "dispfunc\n";
@@ -200,17 +212,17 @@ void clickButton(int btn, int state)
 void drawChild(int w, int h)
 {
 	glSetColor(0xFF0000);
-	drawRect(30 + w / 2, 30 + h / 2, w, h);
+	drawRect(w / 2, h / 2, w, h);
 	// glutSwapBuffers();
 }
 
 void drawChild2(int w, int h)
 {
-	cout << "A\n";
-	cout << w << ":" << h << "\n";
-	glSetColor(0xFFFF00);
+	// cout << "A\n";
+	// cout << w << ":" << h << "\n";
+	glSetColor(0x1a1a1a1a);
 	drawRect(w / 2, h / 2, w, h);
-	glSetColor(0x000000);
+	glSetColor(0xFFFFFF);
 	drawText(L"fuck.", 10, w / 2 - 10, h / 2);
 	// glutSwapBuffers();
 }
@@ -227,6 +239,12 @@ void childKeyPressed(unsigned char key, int x, int y)
 }
 
 
+void mouseClickedChlid(int button, int state, int x, int y)
+{
+	cout << "\tmouce clicked! button: " << button << "; state: " << state << "; coords: " << x << ":" << y << endl;
+}
+
+
 int main(int argc, char * argv[])
 {
 	signal(SIGINT, sigintHandler); 			//set SIGINT system interrupt handler
@@ -237,15 +255,19 @@ int main(int argc, char * argv[])
 	rootObject.setRootObject(&rootObject);
 	rootObject.setX(0);
 	rootObject.setY(0);
+	rootObject.setObjectId(1);
+	// rootObject.setMouseClickHandler(mouseClickedChlid);
 
-	View childObject(100, 100, 100, 100, &rootObject);
 	childObject.setDrawerFunc(drawChild);
+	childObject.setMouseClickHandler(mouseClickedChlid);
+	childObject.setObjectId(2);
+
 	rootObject.registrateChildObject(&childObject);
 	rootObject.setKeypressHandler(childKeyPressed);
 
-	View secondChildObj(200, 200, 80, 80, &childObject);
-	secondChildObj.setDrawerFunc(drawChild2);
-	childObject.registrateChildObject(&secondChildObj);
+	// View secondChildObj(50, 50, 60, 60, &childObject);
+	// secondChildObj.setDrawerFunc(drawChild2);
+	// childObject.registrateChildObject(&secondChildObj);
 
 
 	glInit(argc);

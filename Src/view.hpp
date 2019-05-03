@@ -25,6 +25,7 @@ public:
     void draw();
     void drawEnd();
     void keyPressed(unsigned char key, int x, int y);
+    void mouseClicked(int button, int state, int x, int y);
 };
 
 #endif
