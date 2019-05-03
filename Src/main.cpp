@@ -18,6 +18,7 @@
 #include <thread>
 #include <math.h>
 #include <vector>
+#include <map>
 
 #include "libpng/png.h"
 
@@ -244,6 +245,14 @@ void mouseClickedChlid(int button, int state, int x, int y)
 	cout << "\tmouce clicked! button: " << button << "; state: " << state << "; coords: " << x << ":" << y << endl;
 }
 
+// void testF(map<int, int> data)
+// {
+// 	for (auto it = data.begin(); it != data.end(); it++)
+//     {
+//        cout << it->first << " : "<< it->second << endl;
+//     }
+// }
+
 
 int main(int argc, char * argv[])
 {
@@ -269,11 +278,22 @@ int main(int argc, char * argv[])
 	// secondChildObj.setDrawerFunc(drawChild2);
 	// childObject.registrateChildObject(&secondChildObj);
 
+	// testF({	make_pair(BaseGlObj::MSG_PART_BUTTON, 	1),
+	// 		make_pair(BaseGlObj::MSG_PART_STATE, 	0),
+	// 		make_pair(BaseGlObj::MSG_PART_X,	 	100),
+	// 		make_pair(BaseGlObj::MSG_PART_Y, 		100)});
 
 	glInit(argc);
 
 
-
+	// sleep(2);
+	// rootObject.sendMessage(BaseGlObj::MSG_TYPE_MOUSE,
+	// 	{
+	// 		make_pair(BaseGlObj::MSG_PART_BUTTON, 1),
+	// 		make_pair(BaseGlObj::MSG_PART_STATE, 2),
+	// 		make_pair(BaseGlObj::MSG_PART_X, childObject.getX() + 10),
+	// 		make_pair(BaseGlObj::MSG_PART_Y, childObject.getY() + 10)
+	// 	});
 
 	while(1)
 	{

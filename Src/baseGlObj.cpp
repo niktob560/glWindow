@@ -167,3 +167,69 @@ void BaseGlObj::mouseClicked(int button, int state, int x, int y)
     if(mouseClickedHandleFunc != 0x00)
         mouseClickedHandleFunc(button, state, x, y);
 }
+
+
+
+void BaseGlObj::sendMessage(int type, std::map<int, int> data)
+{
+    switch (type)
+    {
+        case MSG_TYPE_MOUSE:
+        {
+            int button, state, x, y;
+            for (auto it = data.begin(); it != data.end(); it++)
+            {
+                switch (it->first)
+                {
+                    case MSG_PART_BUTTON:
+                        button = it->second;
+                        break;
+                    case MSG_PART_STATE:
+                        state = it->second;
+                        break;
+                    case MSG_PART_X:
+                        x = it->second;
+                        break;
+                    case MSG_PART_Y:
+                        y = it->second;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            mouseClicked(button, state, x, y);
+            break;
+        }
+        case MSG_TYPE_KEYBOARD:
+        {
+            int key, x, y;
+            for (auto it = data.begin(); it != data.end(); it++)
+            {
+                switch (it->first)
+                {
+                    case MSG_PART_KEY:
+                        key = it->second;
+                        break;
+                    case MSG_PART_X:
+                        x = it->second;
+                        break;
+                    case MSG_PART_Y:
+                        y = it->second;
+                        break;
+                    default:
+                        break;
+                }
+                keyPressed(key, x, y);
+            }
+            break;
+        }
+        case MSG_TYPE_UNDEF:
+        {
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+}
