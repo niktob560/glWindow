@@ -1,2 +1,2 @@
 # glWindow
-Library for creating OpenGL-based windows using xml markup
+Library for creating OpenGL-based windows using xml markup(yup, as in Android)
