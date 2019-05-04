@@ -19,6 +19,7 @@
 #include <math.h>
 #include <vector>
 #include <map>
+#include <string>
 
 #include "libpng/png.h"
 
@@ -30,7 +31,7 @@
 
 using namespace std;
 
-View rootObject;
+View rootView;
 
 
 
@@ -41,18 +42,18 @@ void glSetColor(uint32_t color)
 
 
 
-void mainDraw(int w, int h)
+void mainDraw(BaseGlObj* owner)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glSetColor(0x000000);
-	drawRect(100, 100, w, h);
+	drawRect(100, 100, owner->getW(), owner->getH());
 	glSetColor(0xFFFFFF);
-	drawRect(w / 2, h / 2, 100, 100);
-	for(int i = 0; i < h; i += 120)
+	drawRect(owner->getW() / 2, owner->getH() / 2, 100, 100);
+	for(int i = 0; i < owner->getH(); i += 120)
 	{
 		drawText(to_wstring(i), 20, 100, i);
 	}
-	for(int i = 0; i < w; i += 120)
+	for(int i = 0; i < owner->getW(); i += 120)
 	{
 		drawText(to_wstring(i), 20, i, 100);
 	}
@@ -73,26 +74,30 @@ void _glReshape(int w, int h)
 	cout << "reshape complete\n";
 
 
-	rootObject.setH(glutGet(GLUT_WINDOW_HEIGHT));
-	rootObject.setW(glutGet(GLUT_WINDOW_WIDTH));
+	rootView.setH(glutGet(GLUT_WINDOW_HEIGHT));
+	rootView.setW(glutGet(GLUT_WINDOW_WIDTH));
 	cout << "sizes set\n";
 
-	rootObject.setX(glutGet(GLUT_WINDOW_WIDTH) / 2);
-	rootObject.setY(glutGet(GLUT_WINDOW_HEIGHT) / 2);
+	rootView.setX(glutGet(GLUT_WINDOW_WIDTH) / 2);
+	rootView.setY(glutGet(GLUT_WINDOW_HEIGHT) / 2);
 	cout << "coords set\n";
 }
 
 
 int fuck = 200;
-View childObject(fuck, 100, 100, 100, &rootObject);
+View childView(fuck, 100, 100, 100, &rootView);
+bool wannaFuck = true;
 
 void _timf(int value)				// Timer function
 {
-	// fuck++;
-	// if(fuck > glutGet(GLUT_WINDOW_WIDTH) + 100)
-	// 	fuck = -300;
+	if(wannaFuck)
+	{
+		fuck++;
+		if(fuck > glutGet(GLUT_WINDOW_WIDTH) + 100)
+			fuck = -300;
+	}
 	// cout << "fuck " << fuck << "\n";
-	childObject.setX(fuck);
+	childView.setX(fuck);
 	// if(!_terminated)					//if don't wanna terminate
 	// {
 		//cout << "redraw by timer\n";
@@ -108,13 +113,24 @@ void _timf(int value)				// Timer function
 void _handleKeypress(unsigned char key, //pressed key
 										int x, int y)//coords of mouse
 {
-	rootObject.keyPressed(key, x, rootObject.getH() - y);
+	rootView.sendMessage(BaseGlObj::MSG_TYPE_KEYBOARD,
+		{
+			make_pair(BaseGlObj::MSG_PART_KEY, key),
+			make_pair(BaseGlObj::MSG_PART_X, x),
+			make_pair(BaseGlObj::MSG_PART_Y, rootView.getH() - y)
+		});
 }
 
 
 void _mouseClick(int button, int state, int x, int y)
 {
-	rootObject.mouseClicked(button, state, x, rootObject.getH() - y);
+	rootView.sendMessage(BaseGlObj::MSG_TYPE_MOUSE,
+		{
+			make_pair(BaseGlObj::MSG_PART_BUTTON, button),
+			make_pair(BaseGlObj::MSG_PART_STATE, state),
+			make_pair(BaseGlObj::MSG_PART_X, x),
+			make_pair(BaseGlObj::MSG_PART_Y, rootView.getH() - y)
+		});
 }
 
 int __glArg__;
@@ -133,13 +149,13 @@ void _glVisualFunc()
 	cout << "reshape\n";
 	glutReshapeFunc(_glReshape);
 	cout << "dispfunc\n";
-    glutDisplayFunc([](){rootObject.draw();});
+    glutDisplayFunc([](){rootView.draw();});
 	cout << "keypress\n";
 	glutKeyboardFunc(_handleKeypress);
 	// glutIdleFunc(display);
 	cout << "timer\n";
 	glutTimerFunc(40, _timf, 0);
-	rootObject.setDrawerFunc(mainDraw);
+	rootView.setDrawerFunc(mainDraw);
 	cout << "mainloop\n";
 	glutMainLoop();
 }
@@ -191,40 +207,24 @@ void sigintHandler(int sig)
 
 
 
-void drawButton(int x, int y, int w, int h)
-{
-	cout << "drawing btn\n";
-	// glSetColor(0x484848);
-	// drawRect(x, y, w, h);
-	// glSetColor(0xFFFFFF);
-	// drawRect(x, y, w - 10, h - 10);
-}
-
-void clickButton(int btn, int state)
-{
-	if(btn == GLUT_LEFT_BUTTON && state == GLUT_UP)
-	{
-		cout << "BTN CLICKED!\n";
-		// callTerminateWindow(RETURN_CODE_OK);
-	}
-}
 
 
-void drawChild(int w, int h)
+void drawChild(BaseGlObj* owner)
 {
 	glSetColor(0xFF0000);
-	drawRect(w / 2, h / 2, w, h);
+	drawRect(owner->getW() / 2, owner->getH() / 2, owner->getW(), owner->getH());
 	// glutSwapBuffers();
 }
 
-void drawChild2(int w, int h)
+void drawChild2(BaseGlObj* owner)
 {
 	// cout << "A\n";
 	// cout << w << ":" << h << "\n";
+	// cout << "dc2 " << w << ":" << h << endl;
 	glSetColor(0x1a1a1a1a);
-	drawRect(w / 2, h / 2, w, h);
+	drawRect(owner->getW() / 2, owner->getH() / 2, owner->getW(), owner->getH());
 	glSetColor(0xFFFFFF);
-	drawText(L"fuck.", 10, w / 2 - 10, h / 2);
+	drawText(L"fuck.", 10, owner->getW() / 2 - 10, owner->getH() / 2);
 	// glutSwapBuffers();
 }
 
@@ -236,13 +236,15 @@ void endDrawAll()
 
 void childKeyPressed(unsigned char key, int x, int y)
 {
-	cout << key << endl;
+	cout << "\tKey pressed! Key: " << key << "; code: " << (int)key << "; coords: " << x << ":" << y << endl;
 }
 
 
 void mouseClickedChlid(int button, int state, int x, int y)
 {
-	cout << "\tmouce clicked! button: " << button << "; state: " << state << "; coords: " << x << ":" << y << endl;
+	cout << "\tMouce clicked! Button: " << button << "; state: " << state << "; coords: " << x << ":" << y << endl;
+	if(state == 1 && button == 0)
+		wannaFuck = !wannaFuck;
 }
 
 // void testF(map<int, int> data)
@@ -253,30 +255,53 @@ void mouseClickedChlid(int button, int state, int x, int y)
 //     }
 // }
 
+void drawButton(BaseGlObj* owner)
+{
+	glSetColor(0xFFFFFF);
+	drawRect(20, 20, owner->getW(), owner->getH());
+	glSetColor(0x000000);
+	drawText(((BaseGlButton*)owner)->getText(), 10, 8, 20);
+}
+
+void buttonClicked(int button, int state, int x, int y)
+{
+	cout << "button clicked!" << endl;
+}
+
 
 int main(int argc, char * argv[])
 {
 	signal(SIGINT, sigintHandler); 			//set SIGINT system interrupt handler
 
-	// rootObject = new View();
-	rootObject.setDrawerFunc(mainDraw);
-	rootObject.setDrawEnderFunc(endDrawAll);
-	rootObject.setRootObject(&rootObject);
-	rootObject.setX(0);
-	rootObject.setY(0);
-	rootObject.setObjectId(1);
-	// rootObject.setMouseClickHandler(mouseClickedChlid);
+	// rootView = new View();
+	rootView.setDrawerFunc(mainDraw);
+	rootView.setDrawEnderFunc(endDrawAll);
+	rootView.setRootObject(&rootView);
+	rootView.setX(0);
+	rootView.setY(0);
+	rootView.setObjectId(1);
 
-	childObject.setDrawerFunc(drawChild);
-	childObject.setMouseClickHandler(mouseClickedChlid);
-	childObject.setObjectId(2);
+	childView.setDrawerFunc(drawChild);
+	// childView.setMouseClickHandler(mouseClickedChlid);
+	childView.setObjectId(2);
+	// childView.setKeypressHandler(childKeyPressed);
+	childView.setW(100);
+	childView.setH(100);
 
-	rootObject.registrateChildObject(&childObject);
-	rootObject.setKeypressHandler(childKeyPressed);
+	rootView.registrateChildObject(&childView);
 
-	// View secondChildObj(50, 50, 60, 60, &childObject);
-	// secondChildObj.setDrawerFunc(drawChild2);
-	// childObject.registrateChildObject(&secondChildObj);
+	BaseGlButton btn(20, 20, 50, 30, &childView, L"Button");
+	btn.setDrawerFunc(drawButton);
+	btn.setMouseClickHandler(buttonClicked);
+	btn.setObjectId(4);
+	childView.registrateChildObject(&btn);
+
+	// View secondChildView(20, 20, 60, 60, &childView);
+	// secondChildView.setObjectId(3);
+	// secondChildView.setDrawerFunc(drawChild2);
+	// childView.registrateChildObject(&secondChildView);
+	// secondChildView.setMouseClickHandler(mouseClickedChlid);
+	// secondChildView.setKeypressHandler(childKeyPressed);
 
 	// testF({	make_pair(BaseGlObj::MSG_PART_BUTTON, 	1),
 	// 		make_pair(BaseGlObj::MSG_PART_STATE, 	0),
@@ -287,12 +312,12 @@ int main(int argc, char * argv[])
 
 
 	// sleep(2);
-	// rootObject.sendMessage(BaseGlObj::MSG_TYPE_MOUSE,
+	// rootView.sendMessage(BaseGlObj::MSG_TYPE_MOUSE,
 	// 	{
 	// 		make_pair(BaseGlObj::MSG_PART_BUTTON, 1),
 	// 		make_pair(BaseGlObj::MSG_PART_STATE, 2),
-	// 		make_pair(BaseGlObj::MSG_PART_X, childObject.getX() + 10),
-	// 		make_pair(BaseGlObj::MSG_PART_Y, childObject.getY() + 10)
+	// 		make_pair(BaseGlObj::MSG_PART_X, childView.getX() + 10),
+	// 		make_pair(BaseGlObj::MSG_PART_Y, childView.getY() + 10)
 	// 	});
 
 	while(1)

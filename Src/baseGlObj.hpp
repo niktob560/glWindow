@@ -8,7 +8,7 @@ class BaseGlObj
 private:
 protected:
     int x, y, w, h;
-    void (*drawerFunc)(int w, int h) = 0x00;
+    void (*drawerFunc)(BaseGlObj* owner) = 0x00;
     void (*drawEnderFunc)() = 0x00;
     BaseGlObj* rootObject = 0x00;
     void (*keyPressedHandleFunc)(unsigned char key, int x, int y) = 0x00;
@@ -38,7 +38,7 @@ public:
     void setH(int h);
     void setCoords(int x, int y);
     void setSize(int w, int h);
-    void setDrawerFunc(void (*drawerFunc)(int w, int h));
+    void setDrawerFunc(void (*drawerFunc)(BaseGlObj* owner));
     void setRootObject(BaseGlObj* rootObject);
     void setDrawEnderFunc(void (*drawEnderFunc)());
     void setKeypressHandler(void (*keyPressedHandleFunc)(unsigned char key, int x, int y));

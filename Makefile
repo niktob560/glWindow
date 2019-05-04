@@ -15,9 +15,9 @@ BINDIR=Binaries
 all: $(BUILDDIR)/$(TARGET)
 
 $(BUILDDIR)/$(TARGET): $(BUILDDIR)/$(TARGET).o
-	$(CPP) $(LFLAGS) $(LIBS) $(BUILDDIR)/baseGlObj.o $(BUILDDIR)/view.o $(BUILDDIR)/$(TARGET).o -o $(BINDIR)/$(TARGET)
+	$(CPP) $(LFLAGS) $(LIBS) $(BUILDDIR)/baseGlObj.o $(BUILDDIR)/view.o $(BUILDDIR)/button.o $(BUILDDIR)/$(TARGET).o -o $(BINDIR)/$(TARGET)
 
-$(BUILDDIR)/$(TARGET).o: $(BUILDDIR)/baseGlObj.o $(BUILDDIR)/view.o
+$(BUILDDIR)/$(TARGET).o: $(BUILDDIR)/baseGlObj.o $(BUILDDIR)/view.o $(BUILDDIR)/button.o
 	$(CPP) -c $(CFLAGS) $(SOURCEDIR)/$(TARGET).cpp -o $(BUILDDIR)/$(TARGET).o
 
 $(BUILDDIR)/baseGlObj.o:
@@ -25,6 +25,9 @@ $(BUILDDIR)/baseGlObj.o:
 
 $(BUILDDIR)/view.o:
 	$(CPP) -c $(CFLAGS) $(SOURCEDIR)/view.cpp -o $(BUILDDIR)/view.o
+
+$(BUILDDIR)/button.o:
+	$(CPP) -c $(CFLAGS) $(SOURCEDIR)/button.cpp -o $(BUILDDIR)/button.o
 
 
 clean:

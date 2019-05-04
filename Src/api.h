@@ -27,6 +27,7 @@
 
 #include "baseGlObj.hpp"
 #include "view.hpp"
+#include "button.hpp"
 
 #include "glTypes.cpp"
 #include "glDrawer.cpp"

@@ -61,7 +61,7 @@ void BaseGlObj::setSize(int w, int h)
     this->setH(h);
 }
 
-void BaseGlObj::setDrawerFunc(void (*drawerFunc)(int w, int h))
+void BaseGlObj::setDrawerFunc(void (*drawerFunc)(BaseGlObj* owner))
 {
     this->drawerFunc = drawerFunc;
 }
@@ -130,14 +130,15 @@ int BaseGlObj::getObjectId()
 
 void BaseGlObj::draw()
 {
-    std::cout << "baseDraw\n";
+    // std::cout << "baseDraw\n";
     if(drawerFunc != 0x00)
-        drawerFunc(w, h);
+        drawerFunc(this);
+    drawEnd();
 }
 
 void BaseGlObj::drawEnd()
 {
-    std::cout << "base draw ending\n";
+    // std::cout << "base draw ending\n";
     if(drawEnderFunc != 0x00)
         drawEnderFunc();
 }

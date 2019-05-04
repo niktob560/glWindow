@@ -68,11 +68,11 @@ BaseGlObj* View::getChildObject(int index)
     else
         return NULL;
 }
-using namespace std;
+// using namespace std;
 void View::draw()
 {
     if(drawerFunc != 0x00)
-        drawerFunc(w, h);
+        drawerFunc(this);
     for(int i = 0; i < childObjectsRegistrated; i++)
     {
         glPushMatrix();
@@ -124,6 +124,7 @@ void View::mouseClicked(int button, int state, int x, int y)
         {
             if(childObjectPool[i]->containsCoords(x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY()))
             {
+                // std::cout << "A\n";
                 childObjectPool[i]->mouseClicked(button, state, x - childObjectPool[i]->getX(), y - childObjectPool[i]->getY());
                 return;
             }
